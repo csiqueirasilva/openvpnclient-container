@@ -1,0 +1,4 @@
+#!/bin/sh
+
+socat TCP-LISTEN:1003,fork,reuseaddr TCP:myhost1.com:443 &
+socat TCP-LISTEN:1004,fork,reuseaddr TCP:myhost2.com:443 &

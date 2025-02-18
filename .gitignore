@@ -1,0 +1,5 @@
+.env
+vpn/*.ovpn
+*.log
+*.pid
+run-socat.sh

@@ -1,0 +1,20 @@
+services:
+  vpn:
+    build: .
+    container_name: ${VPN_SERVICE_NAME:-openvpn-client}
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - $VPN_CONFIG_PATH:/etc/openvpn/config.ovpn:ro
+      - $VPN_PASSWORD_FILE:/etc/openvpn/auth.txt
+    ports:
+      - 10.0.0.3:443:1003 # assign services you require, sample
+      - 10.0.0.4:443:1004
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
