@@ -38,3 +38,35 @@ Also change your ovpn client configuration to include the password file if it do
 ```
 auth-user-pass /etc/openvpn/auth.txt
 ```
+
+### alternative to using netplan
+
+you could use a service unit (systemctl) to manage the extra IPs needed
+
+```
+sudo nano /etc/systemd/system/loopback-ips.service
+```
+
+with the contents below (add ips as needed)
+
+```
+[Unit]
+Description=Add additional loopback IPs
+After=network.target
+
+[Service]
+ExecStart=/bin/bash -c 'ip addr add 10.0.0.2/32 dev lo; ip addr add 10.0.0.3/32 dev lo; ip addr add 10.0.0.4/32 dev lo; ip addr add 10.0.0.5/32 dev lo; ip addr add 10.0.0.6/32 dev lo'
+ExecStop=/bin/bash -c 'ip addr del 10.0.0.2/32 dev lo; ip addr del 10.0.0.3/32 dev lo; ip addr del 10.0.0.4/32 dev lo; ip addr del 10.0.0.5/32 dev lo; ip addr del 10.0.0.6/32 dev lo'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+and you can reload systemctl and enable the new service
+
+```
+sudo systemctl daemon-reload
+sudo systemctl enable loopback-ips.service
+sudo systemctl start loopback-ips.service
+```
